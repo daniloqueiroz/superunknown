@@ -17,7 +17,7 @@ To see what has changed in recent versions of __PROJECT__, see the [CHANGELOG]()
 *   **run.py**: runs the project on two modes: *testing* and *server*;
     *   **testing**: watch for modifications on the *src* folder and runs *gradle test*;
     *   **server**: runs *gradle run*, then watch for modification on the *src* and runs *gradle war* to compile and copy
-        all modified files to the running directory. Modification to class files will be hot reloaded, thanks to [pring-loaded](https://github.com/SpringSource/spring-loaded).
+        all modified files to the running directory. Modification to class files will be hot reloaded, thanks to [spring-loaded](https://github.com/SpringSource/spring-loaded).
 
 ### Other useful *gradle* tasks
 
