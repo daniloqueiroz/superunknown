@@ -1,4 +1,4 @@
-[![Build Status](NOTE: Use something like Travis CI http://about.travis-ci.org/docs/user/getting-started/)
+[![Build Status](https://travis-ci.org/DaniloQueiroz/superunknown.png)](https://travis-ci.org/DaniloQueiroz/superunknown)
 
 # Project name
 
