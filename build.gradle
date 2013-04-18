@@ -42,10 +42,10 @@ dependencies {
     compile (
             // guice
             'com.google.inject:guice:3.0',
-            //'com.google.inject.extensions:guice-servlet:3.0',
 
             // jetty
             'org.eclipse.jetty:jetty-servlet:9.0.2.v20130417',
+            'org.eclipse.jetty:jetty-servlets:9.0.2.v20130417',
 
             // Logging Facade
             'org.slf4j:slf4j-api:1.7.5',

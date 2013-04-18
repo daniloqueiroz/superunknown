@@ -25,6 +25,7 @@ import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlets.gzip.GzipHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -93,7 +94,9 @@ public class HandlersBuilder {
         servletHandler.addFilter(GuiceFilter.class, "/*", null);
         servletHandler.addServlet(DefaultServlet.class, "/");
         servletHandler.setContextPath("/");
-        return servletHandler;
+        GzipHandler gzip = new GzipHandler();
+        gzip.setHandler(servletHandler);
+        return gzip;
     }
 
     /**
