@@ -2,11 +2,16 @@ package handler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+
+import datastore.GenericDAO;
 
 /**
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
@@ -14,21 +19,30 @@ import org.slf4j.LoggerFactory;
 
 @Path("/hello")
 public class Hello {
-    @Path("/text") @GET
+    private static final Logger logger = LoggerFactory.getLogger(Hello.class);
+
+    @Inject
+    private GenericDAO<HelloWorld> msgDAO;
+
+    @Path("/")
+    @GET
     @Produces("text/plain")
     public String get() {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.info("Received hellotext get!");
-
+        logger.info("Received hello - returning text!");
         return "Howdy World!\n";
     }
 
-    @Path("/json") @GET
+    @Path("/{name}")
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public HelloWorld getJSON() {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.info("Received hellojson get!");
-        return new HelloWorld();
+    public HelloWorld getJSON(@PathParam("name") String name) {
+        logger.info("Received hello {} - returning json", name);
+        if (!this.msgDAO.exists(name)) {
+            logger.info("Creating new entry", name);
+            HelloWorld world = new HelloWorld(name);
+            this.msgDAO.save(world);
+        }
+        return this.msgDAO.get(name);
     }
 
 }

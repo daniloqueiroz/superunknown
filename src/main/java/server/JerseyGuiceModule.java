@@ -1,13 +1,18 @@
 package server;
 
 import handler.Hello;
+import handler.HelloWorld;
 
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.google.inject.TypeLiteral;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+
+import datastore.GenericDAO;
+import datastore.jdo.JDOGenericDAO;
 
 /**
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
@@ -24,7 +29,8 @@ public class JerseyGuiceModule extends JerseyServletModule {
      * Binds other dependencies to Guice
      */
     private void bindDependencies() {
-        // TODO Auto-generated method stub
+        this.bind(new TypeLiteral<GenericDAO<HelloWorld>>() {
+        }).toInstance(new JDOGenericDAO<HelloWorld>(HelloWorld.class));
     }
 
     /**
