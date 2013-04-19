@@ -9,8 +9,12 @@ import time
 from threading import Thread
 import os
 
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+try:
+    from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
+except ImportError:
+    print "This program requires watchdog to run. Try 'pip install watchdog'"
+    sys.exit(42)
 
 _dir=os.path.join(os.getcwd(), 'src')
 _wait_seconds=5
