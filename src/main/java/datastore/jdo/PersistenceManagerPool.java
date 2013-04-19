@@ -7,6 +7,8 @@ import javax.jdo.PersistenceManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import server.Configuration;
+
 /**
  * Thread based pool for {@link PersistenceManager}.
  * 
@@ -25,18 +27,6 @@ public class PersistenceManagerPool {
 
     public static PersistenceManagerPool getInstance() {
         return instance;
-    }
-
-    /**
-     * Closes the current connection to database.
-     * 
-     * This method should be used carefully. Use this only when you are doing
-     * background tasks. After closes the connection any object retrieved from
-     * database become to a inconsistent state, and shouldn't be used (read or
-     * modified) anymore.
-     */
-    public static void forceClose() {
-        instance.close();
     }
 
     // Object stuff
@@ -60,7 +50,7 @@ public class PersistenceManagerPool {
         }
     }
 
-    public PersistenceManager getPersistenceManagerForThread() {
+    protected PersistenceManager getPersistenceManagerForThread() {
         logger.debug("Getting a PersistenceManager.");
         PersistenceManager pm = this.pool.get();
         if (pm == null || pm.isClosed()) {
@@ -75,12 +65,16 @@ public class PersistenceManagerPool {
      * This class is a wrapper to the {@link PersistenceManagerFactory}.
      */
     private static class PMFWrapper {
-        private static final String PMF_DEFAULT_VALUE = "jdo-factory";
 
         private static PersistenceManagerFactory pmFactory;
 
         static {
-            pmFactory = JDOHelper.getPersistenceManagerFactory(PMF_DEFAULT_VALUE);
+            Configuration config = new Configuration();
+            if (config.getDebugMode()) {
+                pmFactory = JDOHelper.getPersistenceManagerFactory(config.getPMFNameDebug());
+            } else {
+                pmFactory = JDOHelper.getPersistenceManagerFactory(config.getPMFNameProduction());
+            }
         }
 
         public static PersistenceManager getPersistenceManager() {

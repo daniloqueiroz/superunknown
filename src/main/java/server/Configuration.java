@@ -1,7 +1,7 @@
 package server;
 
-import static java.lang.Integer.parseInt;
 import static java.lang.Boolean.parseBoolean;
+import static java.lang.Integer.parseInt;
 
 /**
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
@@ -11,7 +11,8 @@ public class Configuration {
     public enum Key {
         PORT("server.PORT", "8080"), REQUESTS_LOG_FOLDER("server.REQUESTS_LOG_FOLDER", "/tmp"), STATIC_RESOURCES(
                 "server.STATIC_RESOURCES", "css js images"), DEBUG_MODE("server.DEBUG_MODE",
-                "false");
+                "false"), PMF_NAME_DEBUG("jdo.PMF_NAME_DEBUG", "debug-in-memory"), PMF_NAME_PRODUCTION(
+                "jdo.PMF_NAME_DEBUG", "production-default");
 
         private String defaultValue;
         private String key;
@@ -55,5 +56,12 @@ public class Configuration {
     public boolean getDebugMode() {
         return parseBoolean(this.getProperty(Key.DEBUG_MODE));
     }
+    
+    public String getPMFNameDebug() {
+        return this.getProperty(Key.PMF_NAME_DEBUG);
+    }
 
+    public String getPMFNameProduction() {
+        return this.getProperty(Key.PMF_NAME_PRODUCTION);
+    }
 }
