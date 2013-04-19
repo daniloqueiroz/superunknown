@@ -38,59 +38,71 @@ repositories {
     }
 }
 
+configurations { 
+    jdo
+}
+
 dependencies {
-    compile (
-            // guice
-            'com.google.inject:guice:3.0',
-
-            // jetty
-            'org.eclipse.jetty:jetty-servlet:9.0.2.v20130417',
-            'org.eclipse.jetty:jetty-servlets:9.0.2.v20130417',
-
-            // Logging Facade
-            'org.slf4j:slf4j-api:1.7.5',
-
-            // Jersey
-            'com.sun.jersey:jersey-core:1.17.1',
-            'com.sun.jersey:jersey-servlet:1.17.1',
-            'com.sun.jersey.contribs:jersey-guice:1.17.1',
-
-            // Jackson
-            'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.2.0-rc1',
-
-            // JDO
+    
+    jdo (
             'javax.jdo:jdo-api:3.0',
-
-            // spymemcached
-            'spy:spymemcached:2.8.1',
-            //'joda-time:joda-time:2.2',
-            )
+            'org.datanucleus:datanucleus-enhancer:3.1.1',
+            'org.datanucleus:datanucleus-core:3.2.2',
+            'org.datanucleus:datanucleus-api-jdo:3.2.1',
+    )
+    
+    compile (
+        // guice
+        'com.google.inject:guice:3.0',
+        // jetty
+        'org.eclipse.jetty:jetty-servlet:9.0.2.v20130417',
+        'org.eclipse.jetty:jetty-servlets:9.0.2.v20130417',
+        
+        // Logging Facade
+        'org.slf4j:slf4j-api:1.7.5',
+        
+        // Jersey
+        'com.sun.jersey:jersey-core:1.17.1',
+        'com.sun.jersey:jersey-servlet:1.17.1',
+        'com.sun.jersey.contribs:jersey-guice:1.17.1',
+        
+        // Jackson
+        'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.2.0-rc1',
+        
+        // JDO
+        'javax.jdo:jdo-api:3.0',
+        
+        // spymemcached
+        'spy:spymemcached:2.8.1',
+        //'joda-time:joda-time:2.2',
+    )
 
     runtime (
-            // Logback runtime
-            'ch.qos.logback:logback-classic:1.0.11',
-            'org.slf4j:log4j-over-slf4j:1.7.5',
-            'net.logstash.logback:logstash-logback-encoder:1.1',
-            'org.codehaus.janino:janino:2.6.1',
-            // Jersey
-            'com.sun.jersey:jersey-server:1.17.1',
-            // Datanucleus
-            'org.datanucleus:datanucleus-core:3.2.2',
-            'org.datanucleus:datanucleus-rdbms:3.2.1',
-            'org.datanucleus:datanucleus-cache:3.1.1',
-            // Derby embedded
-            'org.apache.derby:derby:10.10.1.1',
-            'org.apache.derby:derbytools:10.10.1.1',
-            // memcache            
-            )
+        // Logback runtime
+        'ch.qos.logback:logback-classic:1.0.11',
+        'org.slf4j:log4j-over-slf4j:1.7.5',
+        'net.logstash.logback:logstash-logback-encoder:1.1',
+        'org.codehaus.janino:janino:2.6.1',
+        // Jersey
+        'com.sun.jersey:jersey-server:1.17.1',
+        // Datanucleus
+        'org.datanucleus:datanucleus-core:3.2.2',
+        'org.datanucleus:datanucleus-api-jdo:3.2.1',
+        'org.datanucleus:datanucleus-rdbms:3.2.1',
+        'org.datanucleus:datanucleus-cache:3.1.1',
+        // Derby embedded
+        'org.apache.derby:derby:10.10.1.1',
+        'org.apache.derby:derbytools:10.10.1.1',
+    )
 
     testCompile (
-            'junit:junit:4.11',
-            'org.easymock:easymock:3.1',
-            'org.powermock:powermock-module-junit4:1.5',
-            'org.powermock:powermock-api-easymock:1.5',
-            )
+        'junit:junit:4.11',
+        'org.easymock:easymock:3.1',
+        'org.powermock:powermock-module-junit4:1.5',
+        'org.powermock:powermock-api-easymock:1.5',
+    )
 }
+
 // Custom tasks
 
 task reports(dependsOn: [check, javadoc])
@@ -98,6 +110,25 @@ task reports(dependsOn: [check, javadoc])
 task copyJS(type: Copy) {
     from 'src/main/javascript'
     into 'src/main/webapp/js'
+}
+
+
+classes.doLast {
+
+    task jdoEnhance << {
+        ant.taskdef(name: 'enhancer', classname: 'org.datanucleus.enhancer.tools.EnhancerTask', classpath: configurations.jdo.asPath)
+        ant.enhancer( dir: sourceSets.main.output.classesDir.canonicalPath.toURI().toString(), verbose: 'true') {
+            classpath {
+                pathelement(location: sourceSets.main.output.classesDir.canonicalPath.toURI().toString())
+                pathelement(path: configurations.jdo.asPath)
+            }
+            fileset(dir: sourceSets.main.output.classesDir.canonicalPath.toURI().toString()) {
+                include(name: '**/*.class')
+            }
+        }
+    }
+    jdoEnhance.execute()
+    print "JDO Enhancement done\n"
 }
 
 task run(dependsOn: 'war', type: JavaExec) {
@@ -161,4 +192,3 @@ license {
     ext.year = 2013
     ext.email = 'dpenna.queiroz@gmail.com'
 }
-
