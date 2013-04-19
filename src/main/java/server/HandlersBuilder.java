@@ -99,12 +99,16 @@ public class HandlersBuilder {
         servletHandler.addFilter(GuiceFilter.class, "/*", null);
         servletHandler.addServlet(DefaultServlet.class, "/");
         servletHandler.setContextPath("/");
-        ErrorHandler errorHandler = new ErrorPageErrorHandler();
-        errorHandler.setShowStacks(true);
-        servletHandler.setErrorHandler(errorHandler);
+        servletHandler.setErrorHandler(this.getErrorHandler());
         GzipHandler gzip = new GzipHandler();
         gzip.setHandler(servletHandler);
         return gzip;
+    }
+
+    private ErrorHandler getErrorHandler() {
+        ErrorHandler errorHandler = new ErrorPageErrorHandler();
+        errorHandler.setShowStacks(true);
+        return errorHandler;
     }
 
     /**
