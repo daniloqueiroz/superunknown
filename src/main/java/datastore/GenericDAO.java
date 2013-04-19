@@ -51,7 +51,10 @@ public interface GenericDAO<T> {
      * 
      * @param key
      *            the entity's key.
-     * @return The entity with the given key, if exists, null otherwise.
+     * @return The entity with the given key.
+     * 
+     * @throws ObjectNotFoundException
+     *             if there's no object with the given key
      */
     public abstract T get(Object key);
 

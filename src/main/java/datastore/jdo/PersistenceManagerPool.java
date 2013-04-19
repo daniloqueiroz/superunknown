@@ -36,12 +36,22 @@ public class PersistenceManagerPool {
         // private constructor
     }
 
+    /**
+     * Checks if theres a {@link PersistenceManager} open for the current
+     * {@link Thread}.
+     * 
+     * @return **true** if there's, **false** otherwise.
+     */
     protected boolean isPersistenceManagerOpened() {
         PersistenceManager pm = this.pool.get();
         return (pm != null) && !pm.isClosed();
     }
 
-    protected void close() {
+    /**
+     * Closes the {@link PersistenceManager} for the current {@link Thread}.
+     * Nothing happens if there no {@link PersistenceManager} opened.
+     */
+    protected void closePersistenceManager() {
         if (this.isPersistenceManagerOpened()) {
             logger.debug("Closing PersistenceManager.");
             PersistenceManager pm = this.pool.get();
@@ -50,7 +60,13 @@ public class PersistenceManagerPool {
         }
     }
 
-    protected PersistenceManager getPersistenceManagerForThread() {
+    /**
+     * Gets a *not-closed* {@link PersistenceManager} associate for the current
+     * {@link Thread}.
+     * 
+     * @return a {@link PersistenceManager}
+     */
+    protected PersistenceManager getPersistenceManager() {
         logger.debug("Getting a PersistenceManager.");
         PersistenceManager pm = this.pool.get();
         if (pm == null || pm.isClosed()) {

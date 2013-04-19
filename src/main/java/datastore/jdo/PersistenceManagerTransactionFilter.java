@@ -2,6 +2,8 @@ package datastore.jdo;
 
 import java.io.IOException;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Transaction;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -10,9 +12,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
+ * A filter that takes care of rollback active {@link Transaction} (if exists)
+ * and close the {@link PersistenceManager} for the current {@link Thread}.
+ * 
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
  */
-public class TransactionFilter implements Filter {
+public class PersistenceManagerTransactionFilter implements Filter {
 
     /*
      * (non-Javadoc)
@@ -28,8 +33,19 @@ public class TransactionFilter implements Filter {
         } finally {
             PersistenceManagerPool pool = PersistenceManagerPool.getInstance();
             if (pool.isPersistenceManagerOpened()) {
-                pool.close();
+                this.sanitizeTransaction(pool.getPersistenceManager());
+                pool.closePersistenceManager();
             }
+        }
+    }
+
+    /**
+     * Check if there's an active Transaction and rollback if there's.
+     */
+    private void sanitizeTransaction(PersistenceManager persistenceManager) {
+        Transaction tx = persistenceManager.currentTransaction();
+        if (tx.isActive()) {
+            tx.rollback();
         }
     }
 

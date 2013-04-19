@@ -2,16 +2,19 @@ package datastore.jdo;
 
 import java.util.Collection;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import datastore.GenericDAO;
+import datastore.ObjectNotFoundException;
 
 /**
  * A GenericDAO implementation using JDO.
  * 
  * @author Danilo Penna Queiroz - dpenna.queiroz@gmail.com
  */
-public abstract class JDOGenericDAO<T> implements GenericDAO<T> {
+public class JDOGenericDAO<T> implements GenericDAO<T> {
 
     protected DatastoreFacade datastoreFacade = new DatastoreFacade();
     private Class<T> klass;
@@ -35,10 +38,18 @@ public abstract class JDOGenericDAO<T> implements GenericDAO<T> {
      * 
      * @return The created Query
      * @see javax.jdo.Query
-     * @since 1.0
      */
     public Query createQuery() {
         return this.datastoreFacade.createQueryForClass(this.klass);
+    }
+
+    /**
+     * Creates a new Transaction to be used.
+     * 
+     * @return An active Transaction
+     */
+    public Transaction createTransaction() {
+        return this.datastoreFacade.getActiveTransaction();
     }
 
     /*
@@ -99,7 +110,11 @@ public abstract class JDOGenericDAO<T> implements GenericDAO<T> {
      */
     @Override
     public T get(Object key) {
+        try {
         return this.datastoreFacade.getObjectByKey(this.klass, key);
+        } catch (JDOObjectNotFoundException onf) {
+            throw new ObjectNotFoundException(onf);
+        }
     }
 
     /*

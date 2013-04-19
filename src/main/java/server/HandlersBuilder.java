@@ -35,7 +35,7 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.GuiceServletContextListener;
 
-import datastore.jdo.TransactionFilter;
+import datastore.jdo.PersistenceManagerTransactionFilter;
 
 /**
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
@@ -93,7 +93,7 @@ public class HandlersBuilder {
         ServletContextHandler servletHandler = new ServletContextHandler();
         servletHandler.addEventListener(new ServerContextListener());
         servletHandler.addFilter(MDCLogFilter.class, "/*", null);
-        servletHandler.addFilter(TransactionFilter.class, "/*", null);
+        servletHandler.addFilter(PersistenceManagerTransactionFilter.class, "/*", null);
         servletHandler.addFilter(GuiceFilter.class, "/*", null);
         servletHandler.addServlet(DefaultServlet.class, "/");
         servletHandler.setContextPath("/");
