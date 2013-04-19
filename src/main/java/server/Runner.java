@@ -2,7 +2,11 @@ package server;
 
 import org.eclipse.jetty.server.Server;
 
+import server.internal.HandlersBuilder;
+
 /**
+ * Runner for the Jetty server.
+ * 
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
  */
 public class Runner {
@@ -12,7 +16,7 @@ public class Runner {
 
     public Runner(Configuration config, HandlersBuilder handlersBuilder) {
         this.handlersBuilder = handlersBuilder;
-        int port = config.getPort();
+        int port = config.getServerPort();
         this.server = new Server(port);
     }
 
@@ -34,6 +38,9 @@ public class Runner {
         }
     }
 
+    /**
+     * Starts the server
+     */
     public void start() throws Exception {
         if (!this.server.isRunning()) {
             this.server.setHandler(this.handlersBuilder.createHandler());
@@ -43,6 +50,9 @@ public class Runner {
         }
     }
 
+    /**
+     * Joins the server {@link Thread} and wait it die.
+     */
     public void join() throws InterruptedException {
         this.server.join();
     }
@@ -51,14 +61,17 @@ public class Runner {
      * Static Methods - main method and auxiliary methods
      */
 
-    private static Runner getRunner() {
+    /**
+     * Factory method for the Runner
+     */
+    private static Runner createRunner() {
         Configuration config = new Configuration();
         HandlersBuilder handlersBuilder = new HandlersBuilder(config);
         return new Runner(config, handlersBuilder);
     }
 
     public static void main(String[] args) throws Exception {
-        Runner runner = getRunner();
+        Runner runner = createRunner();
         runner.start();
         runner.join();
     }

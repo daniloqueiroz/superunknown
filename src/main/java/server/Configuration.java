@@ -4,12 +4,18 @@ import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 
 /**
+ * Simple configuration handler for Application. Handles all the configuration
+ * using System.properties.
+ * 
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
  */
 public class Configuration {
 
+    /**
+     * Defines the configuration keys and the default values.
+     */
     public enum Key {
-        PORT("server.PORT", "8080"), REQUESTS_LOG_FOLDER("server.REQUESTS_LOG_FOLDER", "/tmp"), STATIC_RESOURCES(
+        SERVER_PORT("server.PORT", "8080"), REQUESTS_LOG_FOLDER("server.REQUESTS_LOG_FOLDER", "/tmp"), STATIC_RESOURCES(
                 "server.STATIC_RESOURCES", "css js images"), DEBUG_MODE("server.DEBUG_MODE",
                 "false"), PMF_NAME_DEBUG("jdo.PMF_NAME_DEBUG", "debug-in-memory"), PMF_NAME_PRODUCTION(
                 "jdo.PMF_NAME_DEBUG", "production-default");
@@ -37,12 +43,15 @@ public class Configuration {
         }
     }
 
+    /**
+     * Gets the property value for a given key.
+     */
     public String getProperty(Key property) {
         return System.getProperty(property.getKey(), property.getDefaultValue());
     }
 
-    public int getPort() {
-        return parseInt(this.getProperty(Key.PORT));
+    public int getServerPort() {
+        return parseInt(this.getProperty(Key.SERVER_PORT));
     }
 
     public String getRequestLogFolder() {
@@ -53,10 +62,10 @@ public class Configuration {
         return this.getProperty(Key.STATIC_RESOURCES).split(" ");
     }
 
-    public boolean getDebugMode() {
+    public boolean isDebugModeEnabled() {
         return parseBoolean(this.getProperty(Key.DEBUG_MODE));
     }
-    
+
     public String getPMFNameDebug() {
         return this.getProperty(Key.PMF_NAME_DEBUG);
     }

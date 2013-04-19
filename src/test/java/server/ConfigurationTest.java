@@ -16,12 +16,12 @@ public class ConfigurationTest {
 
     @Test
     public void checkDefaultPort() {
-        assertEquals(parseInt(Key.PORT.getDefaultValue()), this.config.getPort());
+        assertEquals(parseInt(Key.SERVER_PORT.getDefaultValue()), this.config.getServerPort());
     }
 
     @Test
     public void checkPort() {
-        System.setProperty(Key.PORT.getKey(), "80");
-        assertEquals(80, this.config.getPort());
+        System.setProperty(Key.SERVER_PORT.getKey(), "80");
+        assertEquals(80, this.config.getServerPort());
     }
 }

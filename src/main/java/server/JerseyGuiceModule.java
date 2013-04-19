@@ -15,11 +15,18 @@ import datastore.GenericDAO;
 import datastore.jdo.JDOGenericDAO;
 
 /**
+ * Guice Servlet module for Application.
+ * 
+ * Jetty handlers and other dependencies to be injected by Guice should be
+ * placed here.
+ * 
  * @author Danilo Queiroz - dpenna.queiroz@gmail.com
  */
 public class JerseyGuiceModule extends JerseyServletModule {
     /**
      * Binds to Guice the Jersey Resources
+     * 
+     * Add here the binds for your Jersey resources.
      */
     private void bindJerseyResources() {
         this.bind(Hello.class);
@@ -27,6 +34,8 @@ public class JerseyGuiceModule extends JerseyServletModule {
 
     /**
      * Binds other dependencies to Guice
+     * 
+     * Add here the general dependencies binds for your project.
      */
     private void bindDependencies() {
         this.bind(new TypeLiteral<GenericDAO<HelloWorld>>() {
@@ -42,7 +51,7 @@ public class JerseyGuiceModule extends JerseyServletModule {
     }
 
     @Override
-    protected void configureServlets() {
+    protected final void configureServlets() {
         this.bindJerseyResources();
         this.bindJerseyDependencies();
         this.bindDependencies();

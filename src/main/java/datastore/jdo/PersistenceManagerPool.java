@@ -86,7 +86,7 @@ public class PersistenceManagerPool {
 
         static {
             Configuration config = new Configuration();
-            if (config.getDebugMode()) {
+            if (config.isDebugModeEnabled()) {
                 pmFactory = JDOHelper.getPersistenceManagerFactory(config.getPMFNameDebug());
             } else {
                 pmFactory = JDOHelper.getPersistenceManagerFactory(config.getPMFNameProduction());
