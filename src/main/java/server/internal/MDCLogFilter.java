@@ -42,6 +42,9 @@ public class MDCLogFilter implements Filter {
             logRequest(request);
             chain.doFilter(request, response);
             throw new IOException("fuck!");
+        } catch (Throwable t) {
+            logger.error("Error handling request.", t.getCause());
+            throw t; 
         } finally {
             MDC.remove(CONTEXT_KEY);
         }
