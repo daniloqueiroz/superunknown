@@ -35,9 +35,7 @@
             <logger name="org.eclipse.jetty" level="INFO" additivity="false">
                 <appender-ref ref="stdout" />
             </logger>
-            <logger name="DataNucleus" level="INFO" additivity="false">
-                <appender-ref ref="stdout" />
-            </logger>
+            <logger name="DataNucleus" level="INFO"/>
 
             <root level="debug">
                 <appender-ref ref="context-stdout" />
@@ -48,9 +46,7 @@
             <logger name="org.eclipse.jetty" level="WARN" additivity="false">
                 <appender-ref ref="general" />
             </logger>
-             <logger name="DataNucleus" level="INFO" additivity="false">
-                <appender-ref ref="general" />
-            </logger>
+            <logger name="DataNucleus" level="WARN"/>
 
             <root level="INFO">
                 <appender-ref ref="context-logstash" />
