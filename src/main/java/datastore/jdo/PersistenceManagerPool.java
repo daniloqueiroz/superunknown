@@ -42,7 +42,7 @@ public class PersistenceManagerPool {
     }
 
     protected void close() {
-        if (instance.isPersistenceManagerOpened()) {
+        if (this.isPersistenceManagerOpened()) {
             logger.debug("Closing PersistenceManager.");
             PersistenceManager pm = this.pool.get();
             pm.close();
