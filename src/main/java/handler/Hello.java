@@ -26,10 +26,17 @@ public class Hello {
 
     @Path("/")
     @GET
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     public String get() {
         logger.info("Received hello - returning text!");
-        return "Howdy World!\n";
+        return "Howdy World!!\n";
+    }
+
+    @Path("/error")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public HelloWorld getError() throws Exception {
+        throw new Exception("Error!");
     }
 
     @Path("/{name}")
