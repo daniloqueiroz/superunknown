@@ -1,6 +1,9 @@
-[![Build Status](https://travis-ci.org/DaniloQueiroz/superunknown.png)](https://travis-ci.org/DaniloQueiroz/superunknown)
+[![Release](https://jitpack.io/v/daniloqueiroz/superunknown.svg)]
+(https://jitpack.io/#daniloqueiroz/superunknown)
 
-# Cuperunknown
+# Superunknown
+
+
 ## About
 
 Simple Java Web framework based on Netty, Jersey and Gson.
