@@ -1,9 +1,8 @@
-# To-do List
 
-*   Upstart script to run it
-    *   init database
-    *   init memcache
-*   hello world -> mustache
-*   use gradle to run js tests and compress js files
-*   management commands
-
+* _Optional Support_
+* _Gson support_
+  * _Optional serializer_
+  * _Date serializer_
+* _MDC logging_
+* */_heartbeat (with HeartbeatMonitor)*
+* _App Exception Mapper_

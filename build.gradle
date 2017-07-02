@@ -1,194 +1,77 @@
-// build repos and dependencies and plugins
+plugins {
+  id 'java'
+  id 'application'
+  id 'jacoco'
 
-// Other potencial useful plugins - add only when needed
-// http://eriwen.github.com/gradle-js-plugin/
-// https://github.com/marceloemanoel/gradle-migrations-plugin
-
-// build script dependencies and repos - for plugins load
-buildscript {
-    repositories { mavenCentral() }
-    dependencies {
-        classpath (
-                'com.mapvine:gradle-cobertura-plugin:1.0',
-                'nl.javadude.gradle.plugins:license-gradle-plugin:0.6.0',
-                'com.github.ben-manes:gradle-versions-plugin:0.3',
-                )
-    }
+  // community plugins
+  id 'com.github.ben-manes.versions' version '0.15.0'
+  id 'com.diffplug.gradle.spotless' version '3.4.0'
 }
 
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'eclipse'
-apply plugin: 'cobertura'
-apply plugin: 'findbugs'
-apply plugin: 'license'
-apply plugin: 'versions'
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
-// project configuration
-
-description = """  """
+description = """Superunknown"""
 version = '1.0'
-sourceCompatibility = 1.7
 
-// general repository
-repositories { 
-    mavenCentral()
-    maven {
-        url "http://files.couchbase.com/maven2/"
-    }
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://jitpack.io" }
 }
 
-configurations { 
-    jdo
-}
 
 dependencies {
-    
-    jdo (
-            'javax.jdo:jdo-api:3.0',
-            'org.datanucleus:datanucleus-enhancer:3.1.1',
-            'org.datanucleus:datanucleus-core:3.2.2',
-            'org.datanucleus:datanucleus-api-jdo:3.2.1',
-    )
-    
-    compile (
-        // guice
-        'com.google.inject:guice:3.0',
-        // jetty
-        'org.eclipse.jetty:jetty-servlet:9.0.2.v20130417',
-        'org.eclipse.jetty:jetty-servlets:9.0.2.v20130417',
-        
-        // Logging Facade
-        'org.slf4j:slf4j-api:1.7.5',
-        
-        // Jersey
-        'com.sun.jersey:jersey-core:1.17.1',
-        'com.sun.jersey:jersey-servlet:1.17.1',
-        'com.sun.jersey.contribs:jersey-guice:1.17.1',
-        
-        // Jackson
-        'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.2.0-rc1',
-        
-        // JDO
-        'javax.jdo:jdo-api:3.0',
-        
-        // spymemcached
-        'spy:spymemcached:2.8.1',
-        //'joda-time:joda-time:2.2',
-    )
+  compile (
+    'com.google.code.gson:gson:2.8.1',
+    'ch.qos.logback:logback-classic:1.2.3',
+    'ch.qos.logback:logback-core:1.2.3',
+    'org.slf4j:slf4j-api:1.7.25',
+    'org.glassfish.jersey.containers:jersey-container-netty-http:2.26-b06',
+    'org.glassfish.jersey.inject:jersey-hk2:2.26-b06',
+    'org.projectlombok:lombok:1.16.16',
+  )
 
-    runtime (
-        // Logback runtime
-        'ch.qos.logback:logback-classic:1.0.11',
-        'org.slf4j:log4j-over-slf4j:1.7.5',
-        'net.logstash.logback:logstash-logback-encoder:1.1',
-        'org.codehaus.janino:janino:2.6.1',
-        // Jersey
-        'com.sun.jersey:jersey-server:1.17.1',
-        // Datanucleus
-        'org.datanucleus:datanucleus-core:3.2.2',
-        'org.datanucleus:datanucleus-api-jdo:3.2.1',
-        'org.datanucleus:datanucleus-rdbms:3.2.1',
-        'org.datanucleus:datanucleus-cache:3.1.1',
-        // Derby embedded
-        'org.apache.derby:derby:10.10.1.1',
-        'org.apache.derby:derbytools:10.10.1.1',
-    )
+  testCompile(
+    'junit:junit:4.12',
+    'org.assertj:assertj-core:3.8.0',
+    'org.mockito:mockito-all:2.0.2-beta'
+  )
 
-    testCompile (
-        'junit:junit:4.11',
-        'org.easymock:easymock:3.1',
-        'org.powermock:powermock-module-junit4:1.5',
-        'org.powermock:powermock-api-easymock:1.5',
-    )
 }
 
-// Custom tasks
-
-task reports(dependsOn: [check, javadoc])
-
-task copyJS(type: Copy) {
-    from 'src/main/javascript'
-    into 'src/main/webapp/js'
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0'
 }
 
-
-classes.doLast {
-
-    task jdoEnhance << {
-        ant.taskdef(name: 'enhancer', classname: 'org.datanucleus.enhancer.tools.EnhancerTask', classpath: configurations.jdo.asPath)
-        ant.enhancer( dir: sourceSets.main.output.classesDir.canonicalPath.toURI().toString(), verbose: 'true') {
-            classpath {
-                pathelement(location: sourceSets.main.output.classesDir.canonicalPath.toURI().toString())
-                pathelement(path: configurations.jdo.asPath)
-            }
-            fileset(dir: sourceSets.main.output.classesDir.canonicalPath.toURI().toString()) {
-                include(name: '**/*.class')
-            }
-        }
-    }
-    jdoEnhance.execute()
-    print "JDO Enhancement done\n"
+test {
+  reports.html.enabled = true
+  reports.junitXml.enabled = false
+  jvmArgs "-XX:-UseSplitVerifier" // This option is to avoid a VerifyError regards cobertura instrumentation
 }
 
-task run(dependsOn: 'war', type: JavaExec) {
-    def agent_path = projectDir.toString() + '/resources/springloaded-1.1.2-dev.jar'
-    jvmArgs = ['-javaagent:'+agent_path, '-noverify']
-    classpath = sourceSets.main.runtimeClasspath
-    workingDir = "$buildDir/$project.name"
-    systemProperty "server.DEBUG_MODE", "TRUE"
-    main = 'server.Runner'
-}
-
-task predeploy(dependsOn: 'war') {
-    // gzip static files
-    // compress js
-}
-
-task deploy(dependsOn: 'predeploy') {
-    // Sync files with server
-    // credentials?
-}
-
-// Task settings
-
-war.dependsOn copyJS 
-war.doLast {
-    if ( !project.hasProperty('warOnly') )
-        ant.unzip(src: war.archivePath, dest: "$buildDir/$project.name")
+jacocoTestReport {
+  reports {
+    xml.enabled false
+    csv.enabled false
+    html.enabled true
+  }
 }
 
 javadoc {
-    options {
-        doclet = "com.visural.doclets.markdown.standard.Standard"
-        docletpath = [
-            rootProject.file('./resources/MarkdownDoclet-3.0.jar')
-        ]
-        // http://sensemaya.org/maya/2009/07/10/making-javadoc-more-legible
-        stylesheetFile = rootProject.file('./resources/javadoc-stylesheet.css')
-    }
+  options {
+    doclet = "com.visural.doclets.markdown.standard.Standard"
+    docletpath = [
+        rootProject.file('./resources/MarkdownDoclet-3.0.jar')
+    ]
+    // http://sensemaya.org/maya/2009/07/10/making-javadoc-more-legible
+    stylesheetFile = rootProject.file('./resources/javadoc-stylesheet.css')
+  }
 }
 
-cobertura {
-    format = 'html'
-    includes = ['**/*.java']
-}
-
-test { // This option is to avoid a VerifyError regards cobertura instrumentation
-    jvmArgs "-XX:-UseSplitVerifier"
-}
-
-[findbugsMain, findbugsTest]*.reports {
-    xml.enabled false
-    html.enabled true
-}
-findbugs { ignoreFailures = true }
-
-license {
-    // https://github.com/hierynomus/license-gradle-plugin
-    header rootProject.file('./resources/HEADER.license')
-    strictCheck true
-
-    ext.year = 2013
-    ext.email = 'dpenna.queiroz@gmail.com'
+spotless {
+  java {
+    importOrderFile rootProject.file('./resources/importorder')
+    eclipseFormatFile rootProject.file('./resources/eclipseformat.xml')
+  }
 }
