@@ -13,7 +13,7 @@ public class InternalResource {
     public InternalResource(HeartbeatResource heartbeat) {
         this.heartbeat = heartbeat;
     }
-    
+
     @Path("/heartbeat")
     public HeartbeatResource heartbeatResource() {
         return this.heartbeat;

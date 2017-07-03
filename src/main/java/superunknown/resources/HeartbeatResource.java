@@ -24,7 +24,7 @@ public class HeartbeatResource {
     public Response checkHeartbeat() {
         Collection<Heartbeat> heartbeats = this.monitors.stream().map(HeartbeatMonitor::isAlive).collect(toList());
         Status status = heartbeats.stream().allMatch(Heartbeat::isHealthy)? Status.OK: Status.SERVICE_UNAVAILABLE;
-        Log.info("Heartbeat check: {}",  status);
+        Log.info("Heartbeat check: {}", status);
         return Response.status(status).entity(heartbeats).build();
     }
 }

@@ -17,7 +17,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.channel.Channel;
 import superunknown.heartbeat.Heartbeat;
 import superunknown.heartbeat.HeartbeatMonitor;
 import superunknown.jersey.ApplicationExceptionMapper;
@@ -27,6 +26,7 @@ import superunknown.jersey.OptionalResponseFilter;
 import superunknown.jersey.gson.GsonFactory;
 import superunknown.resources.HeartbeatResource;
 import superunknown.resources.InternalResource;
+import io.netty.channel.Channel;
 
 public class Application {
 
