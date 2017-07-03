@@ -65,7 +65,7 @@ public class Log {
         LoggerFactory.getLogger(getCallerClassName()).debug(msg);
     }
 
-    public void debug(String format, Object... arguments) {
+    public static void debug(String format, Object... arguments) {
         LoggerFactory.getLogger(getCallerClassName()).debug(format, arguments);
     }
 
@@ -73,7 +73,7 @@ public class Log {
         LoggerFactory.getLogger(getCallerClassName()).debug(msg, t);
     }
 
-    public void info(String msg) {
+    public static void info(String msg) {
         LoggerFactory.getLogger(getCallerClassName()).info(msg);
     }
 
