@@ -5,6 +5,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -27,9 +29,11 @@ public class MetricsFilter implements ContainerResponseFilter, ContainerRequestF
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext response) throws IOException {
-        Instant start = this.timers.remove(requestContext);
-        long ms = Duration.between(start, Instant.now()).toMillis();
-        Log.info("Status: {}; Duration: {} ms", response.getStatus(), ms);
+        Optional<Instant> start = Optional.ofNullable(this.timers.remove(requestContext));
+        AtomicLong ms = new AtomicLong(-1);
+        start.ifPresent(s -> ms.set(Duration.between(s, Instant.now()).toMillis()));
+
+        Log.info("Status: {}; Duration: {} ms", response.getStatus(), ms.get());
         // TODO send to metrics/abacus
     }
 

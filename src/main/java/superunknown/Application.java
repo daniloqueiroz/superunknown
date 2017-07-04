@@ -17,18 +17,17 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.channel.Channel;
 import superunknown.heartbeat.Heartbeat;
 import superunknown.heartbeat.HeartbeatMonitor;
 import superunknown.jersey.ApplicationExceptionMapper;
 import superunknown.jersey.GsonProvider;
-import superunknown.jersey.JsonModelProcessor;
 import superunknown.jersey.LogContextFilter;
 import superunknown.jersey.MetricsFilter;
 import superunknown.jersey.OptionalResponseFilter;
 import superunknown.jersey.gson.GsonFactory;
 import superunknown.resources.HeartbeatResource;
 import superunknown.resources.InternalResource;
-import io.netty.channel.Channel;
 
 public class Application {
 
@@ -119,9 +118,8 @@ public class Application {
     private void registerInternals(ResourceConfig resourceConfig) {
         resourceConfig.register(new InternalResource(new HeartbeatResource(this.monitors)));
         resourceConfig.register(ApplicationExceptionMapper.class);
-        resourceConfig.register(JsonModelProcessor.class);
         resourceConfig.register(LogContextFilter.class, 1);
-        resourceConfig.register(MetricsFilter.class, 2);
+        resourceConfig.register(new MetricsFilter(), 2);
         resourceConfig.register(OptionalResponseFilter.class, 1000);
         resourceConfig.register(new GsonProvider(GsonFactory::defaultGson), 10);
     }
