@@ -22,6 +22,7 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+import superunknown.Log;
 import superunknown.jersey.gson.GsonFactory;
 
 import com.google.gson.Gson;
@@ -64,7 +65,8 @@ public class GsonProvider implements MessageBodyWriter<Object>, MessageBodyReade
         final Type jsonType = type.equals(genericType)? type: genericType;
         try (final Reader reader = new InputStreamReader(entityStream, charset)) {
             return gson().fromJson(reader, jsonType);
-        } catch (final JsonSyntaxException e) {
+        } catch (JsonSyntaxException e) {
+            Log.error("Unable to parse json to object", e);
             throw new WebApplicationException(e.getMessage(), e, Response.Status.BAD_REQUEST);
         }
     }
@@ -96,7 +98,7 @@ public class GsonProvider implements MessageBodyWriter<Object>, MessageBodyReade
             final Annotation[] annotations,
             final MediaType mediaType,
             final MultivaluedMap<String, Object> httpHeaders,
-            final OutputStream entityStream) throws IOException, WebApplicationException {
+            final OutputStream entityStream) throws IOException{
 
         final Type jsonType = type.equals(genericType)? type: genericType;
         try (final Writer writer = new OutputStreamWriter(entityStream, charset)) {
