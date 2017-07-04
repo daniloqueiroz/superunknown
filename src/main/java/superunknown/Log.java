@@ -13,7 +13,9 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class Log {
 
     private static final String CONTEXT = "ctx";
