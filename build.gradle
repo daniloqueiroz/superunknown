@@ -1,5 +1,5 @@
 plugins {
-  id 'java'
+  id 'java-library'
   id 'jacoco'
   id 'maven'
 
@@ -22,12 +22,15 @@ repositories {
 
 
 dependencies {
-  compile (
+  api (
     'com.google.code.gson:gson:2.8.1',
     'ch.qos.logback:logback-classic:1.2.3',
     'ch.qos.logback:logback-core:1.2.3',
     'org.slf4j:slf4j-api:1.7.25',
     'org.glassfish.jersey.containers:jersey-container-netty-http:2.26-b06',
+  )
+
+  implementation (
     'org.glassfish.jersey.inject:jersey-hk2:2.26-b06',
     'org.projectlombok:lombok:1.16.16',
   )
