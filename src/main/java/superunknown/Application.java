@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.ExceptionMapper;
 
 import org.glassfish.jersey.netty.httpserver.NettyHttpContainerProvider;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -42,6 +43,7 @@ public class Application {
     private Set<Class<?>> registeredClasses = new LinkedHashSet<>();
     private Set<Object> registeredObjects = new LinkedHashSet<>();
     private Set<HeartbeatMonitor> monitors = new LinkedHashSet<>();
+    private ExceptionMapper<?> mapper = new ApplicationExceptionMapper();
 
     public Application() {
         this.monitors.add(
@@ -53,6 +55,11 @@ public class Application {
                         .build());
     }
 
+    public Application exceptionMapper(ExceptionMapper<?> mapper) {
+        this.mapper = mapper;
+        return this;
+    }
+    
     public Application port(int port) {
         this.port = port;
         return this;
@@ -117,7 +124,7 @@ public class Application {
 
     private void registerInternals(ResourceConfig resourceConfig) {
         resourceConfig.register(new InternalResource(new HeartbeatResource(this.monitors)));
-        resourceConfig.register(ApplicationExceptionMapper.class);
+        resourceConfig.register(this.mapper);
         resourceConfig.register(LogContextFilter.class, 1);
         resourceConfig.register(new MetricsFilter(), 2);
         resourceConfig.register(OptionalResponseFilter.class, 1000);
