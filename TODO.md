@@ -1,5 +1,6 @@
 * Jersey Monitoring
 * JVM monitoring
+* Abacus metrics
 
 * _Optional Support_
 * _Gson support_
