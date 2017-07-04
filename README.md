@@ -1,5 +1,4 @@
-[![Release](https://jitpack.io/v/daniloqueiroz/superunknown.svg)]
-(https://jitpack.io/#daniloqueiroz/superunknown)
+[![Release](https://jitpack.io/v/daniloqueiroz/superunknown.svg)](https://jitpack.io/#daniloqueiroz/superunknown)
 
 # Superunknown
 
