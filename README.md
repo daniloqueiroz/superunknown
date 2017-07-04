@@ -12,7 +12,7 @@ It's actually just a Glue between these libraries - and apart from this, it's no
 ## Getting start
 
 ```java
-public class App {
+public class MyApp {
     public static void main(string[] args) {
         new Application()
             .register(myresource.class)
@@ -28,7 +28,7 @@ If you want an OOP approach, you can extend the Application class and implement 
 There's also a ``destroy`` method, called when the application is being stopped.
 
 ```java
-public class App extends Application {
+public class MyApp extends Application {
     public void initialize() {
         this.register(myresource.class);
         this.db = new DB();
@@ -40,8 +40,7 @@ public class App extends Application {
     }
 
     public static void main(string[] args) {
-        new Application()
-            .start();
+        new MyApp().start();
     }
 }
 ```
