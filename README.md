@@ -25,10 +25,18 @@ You just need to create a new application, configure it/register your resources 
 
 If you want an OOP approach, you can extend the Application class and implement the ``initialize()`` method, which is called before the application start.
 
+There's also a ``destroy`` method, called when the application is being stopped.
+
 ```java
 public class App extends Application {
     public void initialize() {
         this.register(myresource.class);
+        this.db = new DB();
+    }
+
+    public void destroy() {
+        this.register(myresource.class);
+        this.db.close();
     }
 
     public static void main(string[] args) {

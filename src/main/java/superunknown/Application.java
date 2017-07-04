@@ -45,6 +45,20 @@ public class Application {
     private Set<HeartbeatMonitor> monitors = new LinkedHashSet<>();
     private ExceptionMapper<?> mapper = new ApplicationExceptionMapper();
 
+    /**
+     * Override this method if extending this class and wants to do anything before
+     * start application.
+     */
+    public void initialize() {
+    }
+
+    /**
+     * Override this method if extending this class and wants to do anything during
+     * application shutdown.
+     */
+    public void destroy() {
+    }
+
     public Application port(int port) {
         this.port = port;
         return this;
@@ -86,12 +100,6 @@ public class Application {
         this.startServer(createResourceConfig());
     }
 
-    /**
-     * Override this method if extending this class and wants to do anything before start application.
-     */
-    public void initialize() {
-    }
-
     private void setupLog() {
         Log.configLog(this.logLevel);
         Log.context("application");
@@ -127,7 +135,10 @@ public class Application {
             LOG.info("Successfully Started.");
             System.out.printf("Application started - %s\nStop the application using 'CTRL+C'\n", base.toString());
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> server.close()));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                server.close();
+                destroy();
+            }));
             Thread.currentThread().join();
         } catch (Exception ex) {
             LOG.error("Application error", ex);
