@@ -1,16 +1,14 @@
 package superunknown.heartbeat;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 
 @Data
-@Builder
+@Accessors(fluent = true)
 public class Heartbeat {
     @NonNull
     private String name;
-    @Builder.Default
     private boolean isHealthy = false;
-    @Builder.Default
-    private String message = null;
+    private String message = "";
 }

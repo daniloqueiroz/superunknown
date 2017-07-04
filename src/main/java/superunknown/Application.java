@@ -45,21 +45,6 @@ public class Application {
     private Set<HeartbeatMonitor> monitors = new LinkedHashSet<>();
     private ExceptionMapper<?> mapper = new ApplicationExceptionMapper();
 
-    public Application() {
-        this.monitors.add(
-                () -> Heartbeat
-                        .builder()
-                        .name("Superunknown")
-                        .isHealthy(true)
-                        .message("Superunknow is up and running")
-                        .build());
-    }
-
-    public Application exceptionMapper(ExceptionMapper<?> mapper) {
-        this.mapper = mapper;
-        return this;
-    }
-    
     public Application port(int port) {
         this.port = port;
         return this;
@@ -80,6 +65,11 @@ public class Application {
         return this;
     }
 
+    public Application register(ExceptionMapper<?> mapper) {
+        this.mapper = mapper;
+        return this;
+    }
+
     public Application register(Object resource) {
         this.registeredObjects.add(resource);
         return this;
@@ -91,28 +81,20 @@ public class Application {
     }
 
     public void start() {
+        this.setupLog();
+        this.initialize();
+        this.startServer(createResourceConfig());
+    }
+
+    /**
+     * Override this method if extending this class and wants to do anything before start application.
+     */
+    public void initialize() {
+    }
+
+    private void setupLog() {
         Log.configLog(this.logLevel);
         Log.context("application");
-        ResourceConfig resourceConfig = createResourceConfig();
-
-        try {
-            URI base = new URI(format("http://%s:%s/", this.host, this.port));
-            final Channel server = NettyHttpContainerProvider.createHttp2Server(base, resourceConfig, null);
-
-            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    server.close();
-                }
-            }));
-
-            LOG.info("Successfully Started.");
-            System.out.printf("Application started - %s\nStop the application using 'CTRL+C'\n", base.toString());
-
-            Thread.currentThread().join();
-        } catch (Exception ex) {
-            LOG.error("Application error", ex);
-        }
     }
 
     private ResourceConfig createResourceConfig() {
@@ -123,6 +105,7 @@ public class Application {
     }
 
     private void registerInternals(ResourceConfig resourceConfig) {
+        this.monitors.add(() -> new Heartbeat("Superunknown").isHealthy(true).message("Superunknow is up and running"));
         resourceConfig.register(new InternalResource(new HeartbeatResource(this.monitors)));
         resourceConfig.register(this.mapper);
         resourceConfig.register(LogContextFilter.class, 1);
@@ -136,8 +119,22 @@ public class Application {
         this.registeredObjects.forEach(resourceConfig::registerInstances);
     }
 
-    // For demostration purposes
+    private void startServer(ResourceConfig resourceConfig) {
+        try {
+            URI base = new URI(format("http://%s:%s/", this.host, this.port));
+            final Channel server = NettyHttpContainerProvider.createHttp2Server(base, resourceConfig, null);
 
+            LOG.info("Successfully Started.");
+            System.out.printf("Application started - %s\nStop the application using 'CTRL+C'\n", base.toString());
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> server.close()));
+            Thread.currentThread().join();
+        } catch (Exception ex) {
+            LOG.error("Application error", ex);
+        }
+    }
+
+    // For demostration purposes
     public static void main(String[] args) {
         new Application().register(ExampleResource.class).start();
     }
