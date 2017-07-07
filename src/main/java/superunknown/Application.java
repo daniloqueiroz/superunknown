@@ -3,6 +3,7 @@ package superunknown;
 import static java.lang.String.format;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -145,9 +146,9 @@ public class Application {
         }
     }
 
-    // For demostration purposes
+    // For demonstration purposes
     public static void main(String[] args) {
-        new Application().register(ExampleResource.class).start();
+        new Application().register(ExampleResource.class).logLevel("debug").start();
     }
 
     @Path("/hello")
@@ -159,10 +160,11 @@ public class Application {
         }
 
         public static class Message {
-            public String message;
+            public Optional<String> message;
+            public Instant timestamp = Instant.now();
 
             public Message(String msg) {
-                this.message = msg;
+                this.message = Optional.of(msg);
             }
         }
     }

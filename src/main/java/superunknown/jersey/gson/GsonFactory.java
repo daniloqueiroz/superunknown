@@ -1,8 +1,7 @@
 package superunknown.jersey.gson;
 
+import java.time.Instant;
 import java.util.Date;
-
-import org.jvnet.hk2.annotations.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +13,8 @@ public interface GsonFactory {
 
     public static Gson defaultGson() {
         return new GsonBuilder()
-                .registerTypeAdapter(Optional.class, new OptionalTypeAdapter())
+                .registerTypeAdapterFactory(new OptionalTypeAdapterFactory())
+                .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .create();
     }
